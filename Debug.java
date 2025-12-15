@@ -38,6 +38,19 @@ public class Debug {
                 return simpleInstruction("OP_NEGATE", offset);
             }
 
+            case OP_ADD -> {
+                return simpleInstruction("OP_ADD", offset);
+            }
+            case OP_DIVIDE -> {
+                return  simpleInstruction("OP_DIVIDE", offset);
+            }
+            case OP_MULTIPLY -> {
+                return simpleInstruction("OP_MULTIPLY", offset);
+            }
+            case OP_SUBTRACT ->{
+                return simpleInstruction("OP_SUBTRACT", offset);
+            }
+
             default -> {
                 System.out.println("Unknown Opcode: "+opCode);
                 return offset+1;
@@ -46,13 +59,13 @@ public class Debug {
     }
     int simpleInstruction(String name, int offset)
     {
-        System.out.print(" "+name);
+        System.out.printf("%-16s",name);
         return offset+1;
     }
     int constantInstruction(String name, Chunk chunk, int offset) // offset or index of OP_CONSTANT in code arrayList just after that is operand 
     {
         byte constant = chunk.code.get(offset+1);
-        System.out.printf("%-16s %4d",name, constant);
+        System.out.printf("%-16s",name);
         System.out.println(chunk.constants.get(constant));
         return offset+2;
     }

@@ -4,9 +4,13 @@ import java.util.List;
 public class Chunk{
   //storeing  op code
    public enum OpCode{
-    OP_CONSTANT, // to retrive a constant from constant pool
-    OP_RETURN, // to return / stop 
-    OP_NEGATE
+      OP_CONSTANT, // to retrive a constant from constant pool
+      OP_RETURN, // to return / stop
+      OP_NEGATE,
+      OP_ADD,
+      OP_SUBTRACT,
+      OP_DIVIDE,
+      OP_MULTIPLY
    }
    //using this store the instructions
    List<Byte>code = new ArrayList<>();
