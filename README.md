@@ -8,12 +8,15 @@ This project is inspired by studying how runtimes like the JVM execute bytecode,
 
 ---
 
-## Project Goals
+## 🎯 Goals to Reach
 
-- Understand how virtual machines execute instructions
-- Learn stack-based execution models
-- Design and interpret custom bytecode
-- Build core runtime components step by step
+### Core Language Pipeline
+- [ ] Scanner (Lexer) — tokens, keywords, literals, comments
+- [ ] Parser — grammar rules, precedence, error recovery
+- [ ] Compiler — AST → Bytecode / IR
+- [ ] Symbol Table — variable scope & bindings
+- [ ] Basic Type System — numbers, strings, booleans, nil
+
 
 ---
 
