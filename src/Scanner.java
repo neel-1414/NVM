@@ -19,31 +19,36 @@ public class Scanner {
             }
 
         char c = advance();
+        if(isAlpha(c)) return identifiers();
+        if(isDigit(c)) return number();
         switch (c) {
             //single character tokennext
-            case '('-> {return makeToken(TokenType.TOKEN_LEFT_PAREN);}
-            case ')' -> {return makeToken(TokenType.TOKEN_RIGHT_PAREN);}
-            case '}' -> {return makeToken(TokenType.TOKEN_RIGHT_BRACE);}
-            case '{' -> {return makeToken(TokenType.TOKEN_LEFT_BRACE);}
-            case ';' -> {return makeToken(TokenType.TOKEN_SEMICOLON);}
-            case ',' -> {return makeToken(TokenType.TOKEN_COMMA);}
-            case '-' -> {return makeToken(TokenType.TOKEN_MINUS);}
-            case '+' -> {return makeToken(TokenType.TOKEN_PLUS);}
-            case '*' -> {return makeToken(TokenType.TOKEN_STAR);}
+            case '('-> {return makeNullToken(TokenType.TOKEN_LEFT_PAREN);}
+            case ')' -> {return makeNullToken(TokenType.TOKEN_RIGHT_PAREN);}
+            case '}' -> {return makeNullToken(TokenType.TOKEN_RIGHT_BRACE);}
+            case '{' -> {return makeNullToken(TokenType.TOKEN_LEFT_BRACE);}
+            case ';' -> {return makeNullToken(TokenType.TOKEN_SEMICOLON);}
+            case ',' -> {return makeNullToken(TokenType.TOKEN_COMMA);}
+            case '-' -> {return makeNullToken(TokenType.TOKEN_MINUS);}
+            case '+' -> {return makeNullToken(TokenType.TOKEN_PLUS);}
+            case '*' -> {return makeNullToken(TokenType.TOKEN_STAR);}
 
             //double character tokens != and >=
             case '!' -> {
-                return makeToken(match('=') ? TokenType.TOKEN_BANG_EQUAL : TokenType.TOKEN_BANG);
+                return makeNullToken(match('=') ? TokenType.TOKEN_BANG_EQUAL : TokenType.TOKEN_BANG);
             }
             case '>' -> {
-                return makeToken(match('=') ? TokenType.TOKEN_GREATER_EQUAL : TokenType.TOKEN_EQUAL);
+                return makeNullToken(match('=') ? TokenType.TOKEN_GREATER_EQUAL : TokenType.TOKEN_EQUAL);
             }
             case '=' -> {
-                return makeToken(match('=') ? TokenType.TOKEN_EQUAL_EQUAL : TokenType.TOKEN_EQUAL);
+                return makeNullToken(match('=') ? TokenType.TOKEN_EQUAL_EQUAL : TokenType.TOKEN_EQUAL);
             }
             case '<' -> {
-                return makeToken(match('=') ? TokenType.TOKEN_LESS_EQUAL : TokenType.TOKEN_LESS);
+                return makeNullToken(match('=') ? TokenType.TOKEN_LESS_EQUAL : TokenType.TOKEN_LESS);
             }
+
+            //literals
+            case '"' -> {return string();}
         }
 
         return new Token(TokenType.TOKEN_ERROR, "Unexpected Character", line, null);
@@ -60,7 +65,7 @@ public class Scanner {
         return this.current == this.source.length();
     }
 
-    private Token makeToken(TokenType type)
+    private Token makeNullToken(TokenType type)
     {
         String lexeme = source.substring(start, current);
         return new Token(type, lexeme, line, null);
@@ -72,7 +77,7 @@ public class Scanner {
         if(source.charAt(current) == expected) return  true;
 
         current++;
-        return true;
+        return false;
     }
 
     private void skipWhiteSpaces()
@@ -87,6 +92,19 @@ public class Scanner {
                 case '\r':
                     advance();
                     break;
+                case '\n':
+                    line++;
+                    advance();
+                    break;
+                case '%':
+                    if(peeknext() == '%')
+                    {
+                        while(peek() !='\n' && !isAtEnd()) advance();
+                    }
+                    else{
+                        return;
+                    }
+                    break;
                 default:
                     return;
             }
@@ -96,8 +114,63 @@ public class Scanner {
     {
         return source.charAt(current);
     }
+    private char peeknext()
+    {
+        if(isAtEnd()) return '\0';
+        return source.charAt(current+1);
+    }
+    private Token errorToken(String message)
+    {
+        return new Token(TokenType.TOKEN_ERROR, message, line, null);
+    }
+    private Token string()
+    {
+        while(peek()!= '"' && !isAtEnd())
+        {
+            if(peek() == '\n') line++;
+            advance();
+        }
+        if(isAtEnd()) return errorToken("Unterminated String");
 
+        advance();
+        return makeToken(TokenType.TOKEN_STRING, source.substring(start+1, current-1), source.substring(start, current));
+        //thing to remember that we only want the value in literal and the lexem contains the string
+    }
+    //may remove later added rn to atleast store string literal
+    private Token makeToken(TokenType type, Object literal, String lexeme)
+    {
+        return new Token(type, lexeme, line, literal);
+    }
+    private boolean isDigit(char c)
+    {
+        return c >= '0' && c<='9';
+    }
+    private Token number()
+    {
+        while(isDigit(peek())) advance();
+        if(peek() == '.' && isDigit(peeknext()))
+        {
+            advance();
+            while(isDigit(peek())) advance();
+
+        }
+        return makeToken(TokenType.TOKEN_NUMBER, Integer.valueOf(source.substring(start+1, current-1)) ,source.substring(start,current));
+    }
     
+    private boolean isAlpha(char c)
+    {
+        return (c >= 'a' && c<='z') || (c >= 'A' && c<= 'Z') || (c == '_');
+    }
+    private Token identifiers()
+    {
+        while(isAlpha(peek()) || isDigit(peek())) advance();
+
+        return makeToken(indentiferType(), source.substring(start+1, current-1), source.substring(start,current));
+    }
+    private TokenType identifierType()
+    {
+        //continue 289
+    }
 }
 
 
