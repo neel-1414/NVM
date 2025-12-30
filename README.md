@@ -11,7 +11,7 @@ This project is inspired by studying how runtimes like the JVM execute bytecode,
 ## 🎯 Goals to Reach
 
 ### Core Language Pipeline
-- [ ] Scanner (Lexer) — tokens, keywords, literals, comments
+- [//] Scanner (Lexer) — tokens, keywords, literals, comments
 - [ ] Parser — grammar rules, precedence, error recovery
 - [ ] Compiler — AST → Bytecode / IR
 - [ ] Symbol Table — variable scope & bindings
